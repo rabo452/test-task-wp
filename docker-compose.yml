@@ -1,0 +1,42 @@
+version: '3.8'  # Specify the Docker Compose file format version
+
+services:
+  db:  # Define the database service
+    image: mysql:5.7  # Use MySQL version 5.7 as the database image
+    container_name: wordpress_db  # Assign a custom name to the database container
+    restart: always  # Ensure the container restarts automatically if it crashes
+    environment:  # Define environment variables for database configuration
+      MYSQL_DATABASE: wordpress  # Set the name of the WordPress database
+      MYSQL_USER: wordpress  # Set the username for the database
+      MYSQL_PASSWORD: wordpress  # Set the password for the WordPress user
+      MYSQL_ROOT_PASSWORD: rootpassword  # Set the root password for MySQL
+    volumes:
+      - db_data:/var/lib/mysql  # Persist database data in a named volume
+    networks:
+      - wordpress_network  # Connect the database to a custom network
+
+  wordpress:  # Define the WordPress application service
+    image: wordpress:latest  # Use the latest WordPress image
+    container_name: wordpress_app  # Assign a custom name to the WordPress container
+    restart: always  # Ensure the container restarts automatically if it crashes
+    depends_on:
+      - db  # Ensure the database container starts before WordPress
+    ports:
+      - "8080:80"  # Map port 8080 on the host to port 80 in the container
+    environment:  # Define environment variables for WordPress database configuration
+      WORDPRESS_DB_HOST: db:3306  # Set the database host (container name and port)
+      WORDPRESS_DB_USER: wordpress  # Set the database username
+      WORDPRESS_DB_PASSWORD: wordpress  # Set the database password
+      WORDPRESS_DB_NAME: wordpress  # Set the database name
+    volumes:
+      - wordpress_data:/var/www/html  # Persist WordPress site data in a named volume
+      - ./plugins:/var/www/html/wp-content/plugins  # Mount local plugins directory into the container
+    networks:
+      - wordpress_network  # Connect WordPress to the same custom network as the database
+
+volumes:
+  db_data:  # Define a named volume to persist database data
+  wordpress_data:  # Define a named volume to persist WordPress site data
+
+networks:
+  wordpress_network:  # Define a custom network for communication between services
