@@ -17,4 +17,4 @@ to run:
 1. Download the repository.
 2. install docker & docker-compose from the [official documentation]((https://www.docker.com/).
 3. run `docker-compose up` (windows) or `docker compose up` (linux/mac).
-4. check the plugin's functionality. 
+4. get the wordpress site in localhost:8080 (if it's run in local environment). 
